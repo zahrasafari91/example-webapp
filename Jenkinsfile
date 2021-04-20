@@ -13,7 +13,7 @@ pipeline {
                     GIT_COMMIT_HASH = sh (script:"git log -n 1 --pretty=format:'%H'", returnStdout: true)
                     ACCOUNT_REGISTRY_PREFIX = "public.ecr.aws/g8q7b8u3"
                     sh """
-                    \$(aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/g8q7b8u3)
+                    \$(aws ecr-public get-login --noinclude-email --region us-east-2)
                     """
                 }
             }
