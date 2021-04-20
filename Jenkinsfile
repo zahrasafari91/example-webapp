@@ -13,7 +13,7 @@ pipeline {
                     GIT_COMMIT_HASH = sh (script:"git log -n 1 --pretty=format:'%H'", returnStdout: true)
                     ACCOUNT_REGISTRY_PREFIX = "public.ecr.aws/g8q7b8u3"
                     sh """
-                    \$(aws ecr get-login --noinclude-email --region us-east-2)
+                    \$(aws ecr get-login --no-include-email --region us-east-2)
                     """
                 }
             }
