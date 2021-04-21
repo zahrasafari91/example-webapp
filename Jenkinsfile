@@ -53,7 +53,7 @@ pipeline {
                 echo 'Deploying master to Cluster'
                 script {
                     sh """
-                    ./run-stack.sh example-webapp-production
+                    ./run-stack.sh example-webapp-zsafarialamoti097
                     """
                 }
             }
