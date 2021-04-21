@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+set -x
 
 STACK_NAME=$1
 ALB_LISTENER_ARN=$2

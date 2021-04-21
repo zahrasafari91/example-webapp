@@ -80,7 +80,7 @@ Resources:
           Image: !Ref DockerImage
           Memory: 1024
           PortMappings:
-            - ContainerPort: 3000
+            - ContainerPort: 80
           LogConfiguration:
             LogDriver: awslogs
             Options:
