@@ -54,7 +54,7 @@ pipeline {
                 script {
                     sh """
                     chmod +x -R ${env.WORKSPACE}
-                    ./run-stack.sh
+                    ./run-stack.sh example-webapp-production arn:aws:elasticloadbalancing:us-east-2:237997119181:listener/app/production-website/18f0633cae96d151/5d163e7f55bcb746
                     """
                 }
             }
