@@ -6,7 +6,7 @@ STACK_NAME=$1
 ALB_LISTENER_ARN=$2
 
 aws cloudformation deploy \
-    --region us-east-2
+    --region us-east-2 \
     --stack-name $STACK_NAME \
     --template-file service.yaml \
     --capabilities CAPABILITY_NAMED_IAM \
