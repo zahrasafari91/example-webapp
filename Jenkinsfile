@@ -29,5 +29,20 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy to Production Fixed Server') {
+            when {
+                branch 'master'
+            }
+            steps {
+                echo 'Deploying master to Fixed production'
+                script {
+                    buildImage.push("deploy")
+                    sh """
+                        aws ec2 reboot-instances --region us-east-2 --instance-ids i-009804063fc05185a
+                    """
+                }
+            }
+        }
     }
 }
