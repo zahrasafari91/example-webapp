@@ -54,7 +54,7 @@ pipeline {
                 script {
                     sh """
                     chmod +x -R ${env.WORKSPACE}
-                    ./run-stack.sh example-webapp-production
+                    ./run-stack.sh
                     """
                 }
             }

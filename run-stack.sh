@@ -2,7 +2,7 @@
 
 aws cloudformation deploy \
     --region us-east-2 \
-    --stack-name $STACK_NAME \
+    --stack-name example-webapp-production \
     --template-body file://service.yaml \
     --capabilities CAPABILITY_NAMED_IAM \
     --parameters \
