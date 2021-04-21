@@ -1,12 +1,27 @@
 #!/bin/bash
+set -e
+set -x
 
-aws cloudformation $ACTION \
+STACK_NAME=$1
+ALB_LISTENER_ARN=$2
+
+if ! aws cloudformation describe-stacks --region us-east-2 --stack-name $STACK_NAME 2>&1 > /dev/null
+then 
+    finished_check=stack-create-complete
+else
+    finished_check=stact-update-complete
+fi
+
+aws cloudformation deploy \
     --region us-east-2 \
     --stack-name $STACK_NAME \
-    --template-body file://service.yaml \
+    --template-file service.yaml \
     --capabilities CAPABILITY_NAMED_IAM \
-    --parameters \
-    ParameterKey=DockerImage,ParameterValue=237997119181.dkr.ecr.us-east-2.amazonaws.com/example-webapp-zsafarialamoti097:$(git rev-parse HEAD) \
-    ParameterKey=VPC,ParameterValue=vpc-6b1a9700
-    ParameterKey=Cluster,ParameterValue=default \
-    ParameterKey=Listener,ParameterValue=arn:aws:elasticloadbalancing:us-east-2:237997119181:listener/app/production-website/18f0633cae96d151/5d163e7f55bcb746
+    --parameters-overrides \
+    "DockerImage=237997119181.dkr.ecr.us-east-2.amazonaws.com/example-webapp-zsafarialamoti097:$(git rev-parse HEAD)" \
+    "VPC=vpc-6b1a9700" \
+    "Subnet=subnet-4994de05" \
+    "Cluster=default" \
+    "Listener=$ALB_LISTENER_ARN"
+
+aws cloudformation wait $finished_check --region us-east-2 --stack-name $STACK_NAME
