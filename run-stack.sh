@@ -5,13 +5,6 @@ set -x
 STACK_NAME=$1
 ALB_LISTENER_ARN=$2
 
-if ! aws cloudformation describe-stacks --region us-east-2 --stack-name $STACK_NAME 2>&1 > /dev/null
-then 
-    finished_check=stack-create-complete
-else
-    finished_check=stact-update-complete
-fi
-
 aws cloudformation deploy \
     --stack-name $STACK_NAME \
     --template-file service.yaml \
@@ -22,5 +15,3 @@ aws cloudformation deploy \
     "Subnet=subnet-4994de05" \
     "Cluster=default" \
     "Listener=$ALB_LISTENER_ARN"
-
-aws cloudformation wait $finished_check --region us-east-2 --stack-name $STACK_NAME
