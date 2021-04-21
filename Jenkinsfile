@@ -32,7 +32,7 @@ pipeline {
 
         stage('Deploy to Production Fixed Server') {
             when {
-                branch 'master'
+                branch 'release'
             }
             steps {
                 echo 'Deploying master to Fixed production'
