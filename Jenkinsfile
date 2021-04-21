@@ -52,9 +52,8 @@ pipeline {
             steps {
                 echo 'Deploying master to Cluster'
                 script {
-                    PRODUCTION_ALB_LISTENER_ARN="arn:aws:elasticloadbalancing:us-east-2:237997119181:listener/app/production-website/18f0633cae96d151/5d163e7f55bcb746"
                     sh """
-                    ./run-stack.sh example-webapp-production ${PRODUCTION_ALB_LISTENER_ARN}
+                    ./run-stack.sh example-webapp-production
                     """
                 }
             }
