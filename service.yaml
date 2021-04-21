@@ -1,5 +1,6 @@
 Description: >
   A minimal example of using ECS with a load balancer for docker CI/CD
+
 Parameters:
   DockerImage:
     Description: 237997119181.dkr.ecr.us-east-2.amazonaws.com/example-webapp-zsafarialamoti097:git-hash
@@ -8,9 +9,6 @@ Parameters:
   VPC:
     Description: The VPC that the ECS cluster is deployed to
     Type: AWS::EC2::VPC::Id
-
-  Subnet:
-    Type: AWS::EC2::Subnet::Id
 
   Cluster:
     Description: Please provide the ECS Cluster ID that this service should run on
@@ -31,33 +29,13 @@ Parameters:
     Default: "/*"
 
 Resources:
-  ServiceSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Allow http to client host
-      VpcId:
-        Ref: VPC
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 3000
-          ToPort: 3000
-          CidrIp: 0.0.0.0/0
-
   Service:
     Type: AWS::ECS::Service
     DependsOn: ListenerRule
     Properties:
       Cluster: !Ref Cluster
-      LaunchType: FARGATE
-      #            Role: !Ref ServiceRole
+      Role: !Ref ServiceRole
       DesiredCount: !Ref DesiredCount
-      NetworkConfiguration:
-        AwsvpcConfiguration:
-          AssignPublicIp: ENABLED
-          SecurityGroups:
-            - !Ref "ServiceSecurityGroup"
-          Subnets:
-            - !Ref "Subnet"
       TaskDefinition: !Ref TaskDefinition
       LoadBalancers:
         - ContainerName: "website-service"
@@ -67,13 +45,7 @@ Resources:
   TaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
-      RequiresCompatibilities:
-        - FARGATE
-      ExecutionRoleArn: "ecsTaskExecutionRole"
-      NetworkMode: awsvpc
       Family: website-service
-      Cpu: 512
-      Memory: 1024
       ContainerDefinitions:
         - Name: website-service
           Essential: true
@@ -84,36 +56,9 @@ Resources:
           LogConfiguration:
             LogDriver: awslogs
             Options:
-              awslogs-stream-prefix: !Sub webapp-${AWS::StackName}
               awslogs-group: !Ref AWS::StackName
               awslogs-region: !Ref AWS::Region
 
-  ECSTaskExecutionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: [ecs-tasks.amazonaws.com]
-            Action: ["sts:AssumeRole"]
-      Path: /
-      Policies:
-        - PolicyName: AmazonECSTaskExecutionRolePolicy
-          PolicyDocument:
-            Statement:
-              - Effect: Allow
-                Action:
-                  # Allow the ECS Tasks to download images from ECR
-                  - "ecr:GetAuthorizationToken"
-                  - "ecr:BatchCheckLayerAvailability"
-                  - "ecr:GetDownloadUrlForLayer"
-                  - "ecr:BatchGetImage"
-
-                  # Allow the ECS tasks to upload logs to CloudWatch
-                  - "logs:CreateLogStream"
-                  - "logs:PutLogEvents"
-                Resource: "*"
   CloudWatchLogsGroup:
     Type: AWS::Logs::LogGroup
     Properties:
@@ -129,7 +74,6 @@ Resources:
       Matcher:
         HttpCode: 200-299
       HealthCheckIntervalSeconds: 20
-      TargetType: ip
       HealthCheckPath: /
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 10
