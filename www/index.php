@@ -5,7 +5,7 @@ echo"
     <p>This is our final project :)</p>
     <p> Brad - Aman - Gurbir - Zahra </p>
 
-    <p>Update Test :)</p>
+    <p>I hope everyone is having an awesome day!</p>
 ";
 
 ?>
