@@ -13,7 +13,6 @@ else
 fi
 
 aws cloudformation deploy \
-    --region us-east-2 \
     --stack-name $STACK_NAME \
     --template-file service.yaml \
     --capabilities CAPABILITY_NAMED_IAM \
