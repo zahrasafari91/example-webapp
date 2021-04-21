@@ -45,6 +45,36 @@ pipeline {
             }
         }
 
+        stage('Integration Tests') {
+            when {
+                branch 'master'
+            }
+            steps {
+                echo 'Deploy to test environment and run integration tests'
+                script {
+                    TEST_ALB_LISTENER_ARN="arn:aws:elasticloadbalancing:us-east-2:237997119181:listener/app/testing-website/8ff3ac8a0968882f/f6152abb1ad3bdb4"
+                    sh """
+                    chmod +x -R ${env.WORKSPACE}
+                    ./run-stack.sh example-webapp-test ${TEST_ALB_LISTENER_ARN}
+                    """
+                }
+                echo 'Running tests on the integration test environment'
+                script {
+                    sh """
+                       curl -v http://testing-website-357491808.us-east-2.elb.amazonaws.com | grep '<h1>Hello Dima!!!</h1>'
+                       if [ \$? -eq 0 ]
+                       then
+                           echo tests pass
+                       else
+                           echo tests failed
+                           exit 1
+                       fi
+                    """
+                }
+            }
+        }
+
+
         stage('Deploy to Production Cluster') {
             when {
                 branch 'master'
